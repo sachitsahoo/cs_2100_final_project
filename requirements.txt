@@ -1,4 +1,6 @@
 PySide6
 pyqtgraph
+PyOpenGL 
+PyOpenGL_accelerate
 numpy
 sympy
