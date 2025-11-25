@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout
 class Visualizer(QWidget):
     def __init__(self):
         super().__init__()
-        self.color = (255, 255, 255, 120)
+        self.color = (255, 255, 255, 255)
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -16,9 +16,9 @@ class Visualizer(QWidget):
         layout.addWidget(self.w)
 
         for cfg in [
-            ("x", 90, 0, 1, 0, -10, 0, 0),
-            ("y", 90, 1, 0, 0, 0, -10, 0),
-            ("z", 0, 0, 0, 0, 0, 0, -10),
+            ("x", 90, 0, 1, 0, 0, 0, 0),
+            ("y", 90, 1, 0, 0, 0, 0, 0),
+            ("z", 0, 0, 0, 0, 0, 0, 0),
         ]:
             name, ang, ax, ay, az, tx, ty, tz = cfg
             grid = gl.GLGridItem()
@@ -47,7 +47,7 @@ class Visualizer(QWidget):
         self.line = gl.GLLinePlotItem(
             pos=pts,
             color=pg.glColor(self.color),
-            width=3,
+            width=7,
             antialias=True
         )
         self.w.addItem(self.line)

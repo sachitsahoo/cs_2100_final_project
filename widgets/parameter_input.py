@@ -67,4 +67,3 @@ class ParameterInput(QWidget):
         self.z0_input.setValidator(float_validator)
         add_row("Initial Z-coordinate z0:", self.z0_input)
 
-
