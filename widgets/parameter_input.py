@@ -116,7 +116,7 @@ class ParameterInput(QWidget):
                 current_graph_label.setText(self.file_name.split("/")[-1].split(".")[0])
 
         def save_json_file():
-            if self.v_input.text() and self.theta_slider.value() and self.azimuthal_slider.value() and self.g_input.text() and self.t_start_input.text() and self.t_end_input.text() and self.x0_input.text() and self.y0_input.text() and self.z0_input.text():
+            if self.v_input.text() and self.g_input.text() and self.t_start_input.text() and self.t_end_input.text() and self.x0_input.text() and self.y0_input.text() and self.z0_input.text():
                 data = Params(
                         float(self.v_input.text()),
                         float(self.theta_slider.value()),
