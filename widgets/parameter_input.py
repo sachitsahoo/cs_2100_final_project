@@ -136,7 +136,7 @@ class ParameterInput(QWidget):
         def save_json_file_as(data: Params):
             options = QFileDialog.Options()
             options |= QFileDialog.DontUseNativeDialog
-            file_name, _ = QFileDialog.getSaveFileName(self, "Save File", "", "JSON Files(*.json);;All Files(*)", options = options)
+            file_name, _ = QFileDialog.getSaveFileName(self, "Save File", "./params", "JSON Files(*.json)", options = options)
             if file_name:
                 json_writer = JSONWriter(file_name, data)
                 self.file_name = file_name

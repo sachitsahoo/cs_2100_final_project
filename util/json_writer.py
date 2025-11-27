@@ -6,6 +6,8 @@ import json
 
 class JSONWriter:
     def __init__(self, file_name: str, params: Params):
+        if ".json" not in file_name:
+            file_name += ".json"
         self.file_path = path.Path(__file__).parent.parent / 'params' / file_name
         self.JSONFileManager = JSONFileManager(self.file_path)
         self.json_file = self.JSONFileManager.writeJSON(params)
