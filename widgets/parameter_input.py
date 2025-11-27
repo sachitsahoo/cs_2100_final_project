@@ -1,13 +1,25 @@
 from PySide6.QtWidgets import *
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QDir
 from PySide6.QtGui import QDoubleValidator
+
+from util.json_reader import JSONReader
+from util.json_writer import JSONWriter
+from util.params import Params
+import json
 
 class ParameterInput(QWidget):
     def __init__(self):
         super().__init__()
 
+        graph_data = None
+
+        self.file_name = None
+
         main_layout = QVBoxLayout(self)
         main_layout.setSpacing(10)
+        current_graph_label = QLabel(alignment=Qt.AlignmentFlag.AlignCenter)
+        current_graph_label.setText("Untitled Graph")
+        main_layout.addWidget(current_graph_label)
 
         float_validator = QDoubleValidator()
         float_validator.setNotation(QDoubleValidator.StandardNotation)
@@ -67,3 +79,95 @@ class ParameterInput(QWidget):
         self.z0_input.setValidator(float_validator)
         add_row("Initial Z-coordinate z0:", self.z0_input)
 
+        def get_json_file():
+            file_name = None
+            global graph_data
+            dialog = QFileDialog()
+            dialog.setDirectory("./params")
+            dialog.setFileMode(QFileDialog.AnyFile)
+            dialog.setFilter(QDir.Files)
+            dialog.setAcceptMode(QFileDialog.AcceptOpen)
+            dialog.setNameFilter("JSON Files (*.json)")
+
+
+            if dialog.exec_():
+                file_name = dialog.selectedFiles()
+
+                if file_name[0].endswith('.json'):
+                    json_reader = JSONReader(file_name[0])
+                    graph_data = json_reader.params
+                    self.v_input.setText(str(graph_data.velocity))
+                    self.theta_slider.setValue(graph_data.theta)
+                    self.azimuthal_slider.setValue(graph_data.azimuthal_angle)
+                    self.g_input.setText(str(graph_data.g))
+                    self.t_start_input.setText(str(graph_data.t_start))
+                    self.t_end_input.setText(str(graph_data.t_end))
+                    self.x0_input.setText(str(graph_data.x0))
+                    self.y0_input.setText(str(graph_data.y0))
+                    self.z0_input.setText(str(graph_data.z0))
+
+
+
+                else:
+                    pass
+
+            if file_name:
+                self.file_name = file_name[0]
+                current_graph_label.setText(self.file_name.split("/")[-1].split(".")[0])
+
+        def save_json_file():
+            if self.v_input.text() and self.theta_slider.value() and self.azimuthal_slider.value() and self.g_input.text() and self.t_start_input.text() and self.t_end_input.text() and self.x0_input.text() and self.y0_input.text() and self.z0_input.text():
+                data = Params(
+                        float(self.v_input.text()),
+                        float(self.theta_slider.value()),
+                        float(self.azimuthal_slider.value()),
+                        float(self.g_input.text()),
+                        float(self.t_start_input.text()),
+                        float(self.t_end_input.text()),
+                        float(self.x0_input.text()),
+                        float(self.y0_input.text()),
+                        float(self.z0_input.text())
+                    )
+                if not self.file_name:
+                    save_json_file_as(data)
+                else:
+                    json_writer = JSONWriter(self.file_name, data)
+
+        def save_json_file_as(data: Params):
+            options = QFileDialog.Options()
+            options |= QFileDialog.DontUseNativeDialog
+            file_name, _ = QFileDialog.getSaveFileName(self, "Save File", "", "JSON Files(*.json);;All Files(*)", options = options)
+            if file_name:
+                json_writer = JSONWriter(file_name, data)
+                self.file_name = file_name
+                current_graph_label.setText(self.file_name.split("/")[-1].split(".")[0])
+
+
+        def new_graph():
+            self.file_name = None
+            current_graph_label.setText("Untitled Graph")
+
+        self.h_button_layout = QHBoxLayout()
+
+        self.open_param_button = QPushButton()
+        self.open_param_button.setText("Open Existing Param File")
+        self.open_param_button.clicked.connect(get_json_file)
+
+
+        self.save_param_button = QPushButton()
+        self.save_param_button.setText("Save Param File")
+        self.save_param_button.clicked.connect(save_json_file)
+
+        self.new_graph_button = QPushButton()
+        self.new_graph_button.setText("New Graph")
+        self.new_graph_button.clicked.connect(new_graph)
+
+
+
+
+        self.h_button_layout.addWidget(self.open_param_button)
+        self.h_button_layout.addWidget(self.save_param_button)
+        self.h_button_layout.addWidget(self.new_graph_button)
+        
+        main_layout.addLayout(self.h_button_layout)
+        
