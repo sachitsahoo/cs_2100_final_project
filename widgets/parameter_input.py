@@ -17,9 +17,23 @@ class ParameterInput(QWidget):
 
         main_layout = QVBoxLayout(self)
         main_layout.setSpacing(10)
+
         current_graph_label = QLabel(alignment=Qt.AlignmentFlag.AlignCenter)
         current_graph_label.setText("Untitled Graph")
-        main_layout.addWidget(current_graph_label)
+
+        saved_graph_label = QLabel(alignment=Qt.AlignmentFlag.AlignRight)
+        saved_graph_label.setText("⚠There are unsaved changes")
+
+        label_layout = QHBoxLayout()
+        label_layout.addStretch(1)
+        label_layout.addWidget(current_graph_label)
+        label_layout.addStretch(1)
+        label_layout.addWidget(saved_graph_label)
+        
+        main_layout.addLayout(label_layout)
+
+        def new_changes():
+            saved_graph_label.setText("⚠There are unsaved changes")
 
         float_validator = QDoubleValidator()
         float_validator.setNotation(QDoubleValidator.StandardNotation)
@@ -36,6 +50,7 @@ class ParameterInput(QWidget):
         self.v_input = QLineEdit()
         self.v_input.setValidator(float_validator)
         add_row("Initial velocity v (m/s):", self.v_input)
+        self.v_input.textChanged.connect(new_changes) 
 
         self.theta_slider = QSlider(Qt.Horizontal)
         self.theta_slider.setRange(-90, 90)
@@ -44,6 +59,7 @@ class ParameterInput(QWidget):
         self.theta_slider.valueChanged.connect(
             lambda val: self.theta_label.setText(f"Vertical launch angle θ (°): {val}")
         )
+        self.theta_slider.valueChanged.connect(new_changes)
 
         self.azimuthal_slider = QSlider(Qt.Horizontal)
         self.azimuthal_slider.setRange(-180, 180)
@@ -51,15 +67,19 @@ class ParameterInput(QWidget):
         self.azimuthal_slider.valueChanged.connect(
             lambda val: self.azimuthal_label.setText(f"Azimuthal angle (°): {val}")
         )
+        self.azimuthal_slider.valueChanged.connect(new_changes)
 
         self.g_input = QLineEdit(text="9.81")
         self.g_input.setValidator(float_validator)
         add_row("Gravitational acceleration g (m/s²):", self.g_input)
+        self.g_input.textChanged.connect(new_changes)
 
         self.t_start_input = QLineEdit(text="0") 
-        self.t_start_input.setValidator(float_validator) 
+        self.t_start_input.setValidator(float_validator)
+        self.t_start_input.textChanged.connect(new_changes) 
         self.t_end_input = QLineEdit(text="3") 
         self.t_end_input.setValidator(float_validator) 
+        self.t_end_input.textChanged.connect(new_changes) 
         t_layout = QHBoxLayout() 
         t_layout.addWidget(QLabel("Time array t [start, end] (s):")) 
         t_layout.addWidget(self.t_start_input) 
@@ -69,14 +89,17 @@ class ParameterInput(QWidget):
 
         self.x0_input = QLineEdit()
         self.x0_input.setValidator(float_validator)
+        self.x0_input.textChanged.connect(new_changes) 
         add_row("Initial X-coordinate x0:", self.x0_input)
 
         self.y0_input = QLineEdit()
         self.y0_input.setValidator(float_validator)
+        self.y0_input.textChanged.connect(new_changes) 
         add_row("Initial Y-coordinate y0:", self.y0_input)
 
         self.z0_input = QLineEdit()
         self.z0_input.setValidator(float_validator)
+        self.z0_input.textChanged.connect(new_changes) 
         add_row("Initial Z-coordinate z0:", self.z0_input)
 
         def get_json_file():
@@ -114,6 +137,7 @@ class ParameterInput(QWidget):
             if file_name:
                 self.file_name = file_name[0]
                 current_graph_label.setText(self.file_name.split("/")[-1].split(".")[0])
+                saved_graph_label.setText("✓Saved")
 
         def save_json_file():
             if self.v_input.text() and self.g_input.text() and self.t_start_input.text() and self.t_end_input.text() and self.x0_input.text() and self.y0_input.text() and self.z0_input.text():
@@ -132,6 +156,7 @@ class ParameterInput(QWidget):
                     save_json_file_as(data)
                 else:
                     json_writer = JSONWriter(self.file_name, data)
+                    saved_graph_label.setText("✓Saved")
 
         def save_json_file_as(data: Params):
             options = QFileDialog.Options()
@@ -141,11 +166,14 @@ class ParameterInput(QWidget):
                 json_writer = JSONWriter(file_name, data)
                 self.file_name = file_name
                 current_graph_label.setText(self.file_name.split("/")[-1].split(".")[0])
+                saved_graph_label.setText("✓Saved")
 
 
         def new_graph():
             self.file_name = None
             current_graph_label.setText("Untitled Graph")
+
+
 
         self.h_button_layout = QHBoxLayout()
 
