@@ -154,3 +154,6 @@ docker-compose.override.yml
 .secrets/
 *.key
 *.pem
+
+
+params/
