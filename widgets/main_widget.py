@@ -35,6 +35,7 @@ class MainWidget(QWidget):
         self.param_input.x0_input.textChanged.connect(self.auto_update)
         self.param_input.y0_input.textChanged.connect(self.auto_update)
         self.param_input.z0_input.textChanged.connect(self.auto_update)
+        self.param_input.reset_button.pressed.connect(self.reset_visualizer)
 
     def auto_update(self):
         try:
@@ -65,5 +66,10 @@ class MainWidget(QWidget):
 
         except Exception as e:
             pass
+
+
+    def reset_visualizer(self):
+        self.visualizer.w.reset()
+        self.visualizer.w.opts['distance'] = 40
 
 

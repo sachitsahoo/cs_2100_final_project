@@ -21,6 +21,9 @@ class ParameterInput(QWidget):
         current_graph_label = QLabel(alignment=Qt.AlignmentFlag.AlignLeft)
         current_graph_label.setText("Untitled Graph")
 
+        self.reset_button = QPushButton()
+        self.reset_button.setText("⌂")
+
         saved_graph_label = QLabel(alignment=Qt.AlignmentFlag.AlignRight)
         saved_graph_label.setText("⚠There are unsaved changes")
 
@@ -29,6 +32,7 @@ class ParameterInput(QWidget):
         label_layout.addWidget(current_graph_label)
         label_layout.addStretch(1)
         label_layout.addWidget(saved_graph_label)
+        label_layout.addWidget(self.reset_button)
         
         main_layout.addLayout(label_layout)
 
